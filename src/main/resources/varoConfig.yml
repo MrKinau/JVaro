@@ -1,0 +1,27 @@
+loginWebhooks:
+  - "https://discordapp.com/api/webhooks/adminChannel"
+  - "https://discordapp.com/api/webhooks/loginChannel"
+logoutWebhooks:
+  - "https://discordapp.com/api/webhooks/adminChannel"
+shouldLogoutWebhooks:
+  - "https://discordapp.com/api/webhooks/adminChannel"
+startWebhooks:
+  - "https://discordapp.com/api/webhooks/adminChannel"
+  - "https://discordapp.com/api/webhooks/loginChannel"
+deathsWebhooks:
+  - "https://discordapp.com/api/webhooks/adminChannel"
+  - "https://discordapp.com/api/webhooks/deathsChannel"
+worldborderWebhooks:
+  - "https://discordapp.com/api/webhooks/adminChannel"
+  - "https://discordapp.com/api/webhooks/loginChannel"
+locationLeakWebhooks:
+  - "https://discordapp.com/api/webhooks/adminChannel"
+  - "https://discordapp.com/api/webhooks/loginChannel"
+damageDealtWebhooks:
+  - "https://discordapp.com/api/webhooks/adminChannel"
+startLoginTime: 14
+endLoginTime: 22
+playTime: 20
+discordName: "Varo"
+dailyBorderDiff: -200
+spawnPoint: "world/3/91/-52"

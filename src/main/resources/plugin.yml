@@ -1,0 +1,23 @@
+name: '${project.name}'
+version: '${project.version}'
+main: systems.kinau.jvaro.JVaro
+api-version: 1.17
+authors: [ MrKinau ]
+description: '${project.description}'
+website: https://kinau.systems/
+commands:
+  start:
+    description: Starts the game
+  leaklocation:
+    description: Leaks someones location in Discord
+    aliases:
+      - leak
+      - punish
+      - punishment
+  simpleteam:
+    description: Command to simply add a scoreboard team
+  locate:
+    description: Displays the location of a specific player
+    aliases:
+      - lokalisieren
+      - whereis
