@@ -97,15 +97,16 @@ public class TimesManager {
     private void updateOnlineTime() {
         int checkTime = (JVaro.getInstance().getConfig().getInt("playTime") * 60 * 1000) - 30_000;
         Bukkit.getOnlinePlayers().forEach(player -> {
-                    if (loginTimes.containsKey(player.getUniqueId()) && !logOffBukkitTasks.containsKey(player.getUniqueId())) {
-                        if ((loginTimes.get(player.getUniqueId()) + checkTime) <= System.currentTimeMillis()) {
+                    Long time = loginTimes.get(player.getUniqueId());
+                    if (time != null && !logOffBukkitTasks.containsKey(player.getUniqueId())) {
+                        if ((time + checkTime) <= System.currentTimeMillis()) {
                             logOffTasks.put(player.getUniqueId(), new LogOffTask(player, aBoolean -> {
                                 logOffTasks.remove(player.getUniqueId());
                                 if (logOffBukkitTasks.get(player.getUniqueId()) != null)
                                     logOffBukkitTasks.get(player.getUniqueId()).cancel();
                                 logOffBukkitTasks.remove(player.getUniqueId());
                                 loginTimes.remove(player.getUniqueId());
-                            }, 40));
+                            }, 30));
                             logOffBukkitTasks.put(player.getUniqueId(), Bukkit.getScheduler().runTaskTimer(JVaro.getInstance(), logOffTasks.get(player.getUniqueId()), 20, 20));
                         }
                     }

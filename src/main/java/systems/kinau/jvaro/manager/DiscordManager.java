@@ -70,7 +70,7 @@ public class DiscordManager {
                 webhook.send(new WebhookMessageBuilder()
                         .addEmbeds(new WebhookEmbedBuilder()
                                 .setColor(0x164ce0)
-                                .setTitle(new WebhookEmbed.EmbedTitle(addGenetiveS(player.getName()) + "Zeit ist vorbei", null))
+                                .setTitle(new WebhookEmbed.EmbedTitle(addGenetiveS(player.getName()) + " Zeit ist vorbei", null))
                                 .setDescription("\n" + player.getName() + " sollte demnächst den Server verlassen!")
                                 .setThumbnailUrl("https://cravatar.eu/helmhead/" + player.getUniqueId().toString().replace("-", "").toLowerCase() + "/256.png")
                                 .build())
@@ -140,9 +140,9 @@ public class DiscordManager {
     }
 
     private String addGenetiveS(String name) {
-        if (!(name.endsWith("s") || name.endsWith("z") || name.endsWith("x")))
-            return name + "s";
-        else
+        if (name.endsWith("s") || name.endsWith("z") || name.endsWith("x") || Character.isDigit(name.charAt(name.length() - 1)))
             return name + "'";
+        else
+            return name + "s";
     }
 }

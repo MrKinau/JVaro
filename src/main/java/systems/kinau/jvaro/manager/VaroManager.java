@@ -63,7 +63,7 @@ public class VaroManager {
                             worldBorder.setWarningTime(0);
                             worldBorder.setWarningTime(0);
                             worldBorder.setCenter(new Location(world, 0.0, 0.0, 0.0));
-                            if (size >= maxSize) worldBorder.setSize(size, 30);
+                            if (size >= maxSize) worldBorder.setSize(size, 40);
                         }
                 );
     }
