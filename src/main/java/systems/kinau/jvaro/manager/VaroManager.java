@@ -19,13 +19,7 @@ public class VaroManager {
     public VaroManager() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(JVaro.getInstance(), this::dealWorldBorderDamage, 0, 20);
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(JVaro.getInstance(), () -> {
-            try {
-                updateWorldBorder();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }, 100, 100);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(JVaro.getInstance(), this::updateWorldBorder, 100, 100);
     }
 
     public void start() throws IOException {
@@ -90,15 +84,21 @@ public class VaroManager {
                 });
     }
 
-    private void updateWorldBorder() throws IOException {
+    private void updateWorldBorder() {
         JVaro plugin = JVaro.getInstance();
         long nextChange = plugin.getDataConfig().getLong("nextWorldborderChange");
         if (nextChange < 0) return;
         if (System.currentTimeMillis() > nextChange) {
-            changeWorldBorder(plugin.getConfig().getInt("dailyBorderDiff"));
-            plugin.getDataConfig().set("nextWorldborderChange", LocalDate.now().atStartOfDay().plusDays(1).toInstant(OffsetDateTime.now().getOffset()).toEpochMilli());
-            plugin.getDataConfig().save(plugin.getDataFile());
-            plugin.getTimesManager().resetTimes();
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                changeWorldBorder(plugin.getConfig().getInt("dailyBorderDiff"));
+                plugin.getDataConfig().set("nextWorldborderChange", LocalDate.now().atStartOfDay().plusDays(1).toInstant(OffsetDateTime.now().getOffset()).toEpochMilli());
+                try {
+                    plugin.getDataConfig().save(plugin.getDataFile());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                plugin.getTimesManager().resetTimes();
+            });
         }
     }
 
