@@ -19,13 +19,7 @@ public class VaroManager {
     public VaroManager() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(JVaro.getInstance(), this::dealWorldBorderDamage, 0, 20);
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(JVaro.getInstance(), () -> {
-            try {
-                updateWorldBorder();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }, 100, 100);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(JVaro.getInstance(), this::updateWorldBorder, 100, 100);
     }
 
     public void start() throws IOException {
@@ -57,13 +51,15 @@ public class VaroManager {
         Bukkit.getWorlds().stream()
                 .filter(world -> !world.getName().endsWith("nether") && !world.getName().endsWith("the_end"))
                 .forEach(world -> {
-                            WorldBorder worldBorder = world.getWorldBorder();
-                            worldBorder.setDamageAmount(0.0);
-                            worldBorder.setDamageBuffer(0.0);
-                            worldBorder.setWarningTime(0);
-                            worldBorder.setWarningTime(0);
-                            worldBorder.setCenter(new Location(world, 0.0, 0.0, 0.0));
-                            if (size >= maxSize) worldBorder.setSize(size, 40);
+                            Bukkit.getScheduler().runTask(JVaro.getInstance(), () -> {
+                                WorldBorder worldBorder = world.getWorldBorder();
+                                worldBorder.setDamageAmount(0.0);
+                                worldBorder.setDamageBuffer(0.0);
+                                worldBorder.setWarningTime(0);
+                                worldBorder.setWarningTime(0);
+                                worldBorder.setCenter(new Location(world, 0.0, 0.0, 0.0));
+                                if (size >= maxSize) worldBorder.setSize(size, 40);
+                            });
                         }
                 );
     }
@@ -76,29 +72,37 @@ public class VaroManager {
         Bukkit.getWorlds().stream()
                 .filter(world -> !world.getName().endsWith("nether") && !world.getName().endsWith("the_end"))
                 .forEach(world -> {
-                    WorldBorder worldBorder = world.getWorldBorder();
-                    worldBorder.setDamageAmount(0.0);
-                    worldBorder.setDamageBuffer(0.0);
-                    worldBorder.setWarningDistance(0);
-                    worldBorder.setWarningTime(0);
-                    worldBorder.setCenter(new Location(world, 0.0, 0.0, 0.0));
-                    double newSize = worldBorder.getSize() + sizeDiff;
-                    if (newSize >= maxSize) {
-                        worldBorder.setSize(newSize);
-                        JVaro.getInstance().getDiscordManager().sendWorldBorderChange(world.getName(), (int) newSize);
-                    }
+                    Bukkit.getScheduler().runTask(JVaro.getInstance(), () -> {
+                        WorldBorder worldBorder = world.getWorldBorder();
+                        worldBorder.setDamageAmount(0.0);
+                        worldBorder.setDamageBuffer(0.0);
+                        worldBorder.setWarningDistance(0);
+                        worldBorder.setWarningTime(0);
+                        worldBorder.setCenter(new Location(world, 0.0, 0.0, 0.0));
+                        double newSize = worldBorder.getSize() + sizeDiff;
+                        if (newSize >= maxSize) {
+                            worldBorder.setSize(newSize);
+                            JVaro.getInstance().getDiscordManager().sendWorldBorderChange(world.getName(), (int) newSize);
+                        }
+                    });
                 });
     }
 
-    private void updateWorldBorder() throws IOException {
+    private void updateWorldBorder() {
         JVaro plugin = JVaro.getInstance();
         long nextChange = plugin.getDataConfig().getLong("nextWorldborderChange");
         if (nextChange < 0) return;
         if (System.currentTimeMillis() > nextChange) {
-            changeWorldBorder(plugin.getConfig().getInt("dailyBorderDiff"));
-            plugin.getDataConfig().set("nextWorldborderChange", LocalDate.now().atStartOfDay().plusDays(1).toInstant(OffsetDateTime.now().getOffset()).toEpochMilli());
-            plugin.getDataConfig().save(plugin.getDataFile());
-            plugin.getTimesManager().resetTimes();
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                changeWorldBorder(plugin.getConfig().getInt("dailyBorderDiff"));
+                plugin.getDataConfig().set("nextWorldborderChange", LocalDate.now().atStartOfDay().plusDays(1).toInstant(OffsetDateTime.now().getOffset()).toEpochMilli());
+                try {
+                    plugin.getDataConfig().save(plugin.getDataFile());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                plugin.getTimesManager().resetTimes();
+            });
         }
     }
 
