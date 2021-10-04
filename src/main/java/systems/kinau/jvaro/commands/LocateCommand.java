@@ -9,12 +9,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import systems.kinau.jvaro.JVaro;
 import systems.kinau.jvaro.utils.OfflinePlayerUtils;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-//TODO: Can locate?
 public class LocateCommand implements CommandExecutor {
 
     private final Cache<UUID, Long> cantUseLocate = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
@@ -36,10 +37,19 @@ public class LocateCommand implements CommandExecutor {
             return true;
         }
 
-        String loc = getLocation(getUUID(args[0]));
+        UUID locatedUuid = getUUID(args[0]);
+
+        String loc = getLocation(locatedUuid);
         if (loc == null) {
             sender.sendMessage("§cWow sogar zu dumm zum tippen. GG. Es gibt niemanden, der so einen komischen Namen hat.");
             return true;
+        }
+
+        List<String> locatable = JVaro.getInstance().getDataConfig().getStringList("locatable");
+        if (!locatable.contains(locatedUuid.toString())) {
+            sender.sendMessage("§cDiese Persönlichkeit darf nicht von dir gestalkt werden.");
+            if (sender instanceof Player)
+                return true;
         }
 
         sender.sendMessage(loc);

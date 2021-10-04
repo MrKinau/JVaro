@@ -1,21 +1,21 @@
 package systems.kinau.jvaro.commands;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import systems.kinau.jvaro.JVaro;
 import systems.kinau.jvaro.utils.OfflinePlayerUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.*;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class LeakLocationCommand implements CommandExecutor, TabCompleter {
@@ -36,7 +36,19 @@ public class LeakLocationCommand implements CommandExecutor, TabCompleter {
                 String world = OfflinePlayerUtils.getWorld(compound);
 
                 JVaro.getInstance().getDiscordManager().sendLocationLeakMessage(offlinePlayer, world, (int)Math.round(x), (int)Math.round(z));
-                sender.sendMessage("§aKoordinaten geleaked!");
+
+                List<String> locatable = JVaro.getInstance().getDataConfig().getStringList("locatable");
+                if (!locatable.contains(offlinePlayer.getUniqueId().toString())) {
+                    locatable.add(offlinePlayer.getUniqueId().toString());
+                    JVaro.getInstance().getDataConfig().set("locatable", locatable);
+                    try {
+                        JVaro.getInstance().getDataConfig().save(JVaro.getInstance().getDataFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                sender.sendMessage("§aKoordinaten geleaked und Persönlichkeit stalkbar gemacht!");
             } else sender.sendMessage("Dumm? /locationleak <Spieler>");
         }
         return true;

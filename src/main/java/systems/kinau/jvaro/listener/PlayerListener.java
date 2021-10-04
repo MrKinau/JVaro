@@ -17,10 +17,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import systems.kinau.jvaro.JVaro;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 
 public class PlayerListener implements Listener {
 
@@ -93,17 +91,37 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntityPostStart(EntityDamageByEntityEvent e) {
+        if (e.getEntity().getUniqueId().equals(e.getDamager().getUniqueId())) return;
         if (e.getEntity() instanceof Player && e.getDamager() instanceof Player && JVaro.getInstance().getDataConfig().getBoolean("started")) {
             System.out.println(e.getDamager().getName() + " damaged " + e.getEntity().getName() + " with " + e.getDamage());
             if (!JVaro.getInstance().getTimesManager().damageDealt.contains(e.getDamager().getUniqueId())) {
                 JVaro.getInstance().getTimesManager().damageDealt.add(e.getDamager().getUniqueId());
                 JVaro.getInstance().getDiscordManager().sendDamageDealt((Player) e.getDamager(), (Player) e.getEntity());
+                disableLocationLeak(e.getEntity().getUniqueId());
+                disableLocationLeak(e.getDamager().getUniqueId());
             }
         } else if (e.getEntity() instanceof Player && e.getDamager() instanceof Projectile && ((Projectile) e.getDamager()).getShooter() instanceof Player shooter && JVaro.getInstance().getDataConfig().getBoolean("started")) {
+            if (shooter.getUniqueId().equals(e.getEntity().getUniqueId())) return;
             System.out.println(e.getDamager().getClass().getSimpleName() + " from " + shooter.getName() + " damaged " + e.getEntity().getName() + " with " + e.getDamage());
             if (!JVaro.getInstance().getTimesManager().damageDealt.contains(shooter.getUniqueId())) {
                 JVaro.getInstance().getTimesManager().damageDealt.add(shooter.getUniqueId());
                 JVaro.getInstance().getDiscordManager().sendDamageDealt(shooter, (Player) e.getEntity());
+                disableLocationLeak(e.getEntity().getUniqueId());
+                disableLocationLeak(shooter.getUniqueId());
+            }
+        }
+    }
+
+    private void disableLocationLeak(UUID uuid) {
+        List<String> locatable = JVaro.getInstance().getDataConfig().getStringList("locatable");
+        if (locatable.contains(uuid.toString())) {
+            System.out.println("Disabled location leak for: " + uuid);
+            locatable.remove(uuid.toString());
+            JVaro.getInstance().getDataConfig().set("locatable", locatable);
+            try {
+                JVaro.getInstance().getDataConfig().save(JVaro.getInstance().getDataFile());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
