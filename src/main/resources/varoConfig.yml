@@ -19,9 +19,9 @@ locationLeakWebhooks:
   - "https://discordapp.com/api/webhooks/loginChannel"
 damageDealtWebhooks:
   - "https://discordapp.com/api/webhooks/adminChannel"
-startLoginTime: 14
-endLoginTime: 22
-playTime: 20
+startLoginTime: 15
+endLoginTime: 23
+playTime: 40
 discordName: "Varo"
 dailyBorderDiff: -200
 spawnPoint: "world/3/91/-52"

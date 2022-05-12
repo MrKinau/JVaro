@@ -14,7 +14,7 @@ import java.time.ZoneId;
 
 public class VaroManager {
 
-    private final int INITIAL_WORLDBORDER_SIZE = 5000;
+    private final int INITIAL_WORLDBORDER_SIZE = 3000;
 
     public VaroManager() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(JVaro.getInstance(), this::dealWorldBorderDamage, 0, 20);
@@ -95,7 +95,7 @@ public class VaroManager {
         if (System.currentTimeMillis() > nextChange) {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 changeWorldBorder(plugin.getConfig().getInt("dailyBorderDiff"));
-                plugin.getDataConfig().set("nextWorldborderChange", LocalDate.now().atStartOfDay().plusDays(1).toInstant(OffsetDateTime.now().getOffset()).toEpochMilli());
+                plugin.getDataConfig().set("nextWorldborderChange", LocalDate.now().atStartOfDay().plusDays(2).toInstant(OffsetDateTime.now().getOffset()).toEpochMilli());
                 try {
                     plugin.getDataConfig().save(plugin.getDataFile());
                 } catch (IOException e) {
