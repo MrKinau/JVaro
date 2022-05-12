@@ -1,7 +1,7 @@
 name: '${project.name}'
 version: '${project.version}'
 main: systems.kinau.jvaro.JVaro
-api-version: 1.17
+api-version: 1.18
 authors: [ MrKinau ]
 description: '${project.description}'
 website: https://kinau.systems/
