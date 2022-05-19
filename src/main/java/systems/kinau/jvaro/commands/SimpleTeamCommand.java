@@ -31,11 +31,13 @@ public class SimpleTeamCommand implements CommandExecutor {
                 team.setPrefix(prefix);
                 team.setSuffix("§r");
                 team.setAllowFriendlyFire(false);
+                team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
                 Arrays.stream(args).forEach(arg -> {
                     if (arg.startsWith("#")) {
                         team.setPrefix(ChatColor.of(arg).toString() + prefix + ChatColor.RESET);
+                    } else {
+                        team.addEntry(arg);
                     }
-                    team.addEntry(arg);
                 });
                 sender.sendMessage("§aTeam §6" + displayName + " §aerstellt!");
             } else sender.sendMessage("Dumm? /simpleteam <Spieler1> <Spieler2> [#rrggbb]");

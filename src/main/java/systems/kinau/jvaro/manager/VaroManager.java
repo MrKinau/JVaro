@@ -1,9 +1,8 @@
 package systems.kinau.jvaro.manager;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.WorldBorder;
+import org.bukkit.*;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import systems.kinau.jvaro.JVaro;
 
@@ -11,6 +10,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Iterator;
 
 public class VaroManager {
 
@@ -31,13 +31,26 @@ public class VaroManager {
 
         setWorldBorder(INITIAL_WORLDBORDER_SIZE);
 
+        Bukkit.getWorlds().forEach(world -> {
+            world.setFullTime(0);
+            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+        });
+
         Bukkit.getOnlinePlayers().forEach(player -> {
-                    player.setGameMode(GameMode.SURVIVAL);
-                    player.setHealth(20.0);
-                    player.setFoodLevel(20);
-                    player.setSaturation(5.0F);
-                }
-        );
+            player.setGameMode(GameMode.SURVIVAL);
+            player.setHealth(20.0);
+            player.setFoodLevel(20);
+            player.setSaturation(5.0F);
+            player.setLevel(0);
+            player.setExp(0.0F);
+            player.setStatistic(Statistic.TIME_SINCE_REST, 0);
+            Iterator<Advancement> advancementIterator = Bukkit.getServer().advancementIterator();
+            while (advancementIterator.hasNext()) {
+                AdvancementProgress progress = player.getAdvancementProgress(advancementIterator.next());
+                for (String criteria : progress.getAwardedCriteria())
+                    progress.revokeCriteria(criteria);
+            }
+        });
 
         plugin.getTimesManager().varoStart();
         plugin.getDiscordManager().sendStartMessage();
@@ -57,8 +70,10 @@ public class VaroManager {
                                 worldBorder.setDamageBuffer(0.0);
                                 worldBorder.setWarningTime(0);
                                 worldBorder.setWarningTime(0);
-                                worldBorder.setCenter(new Location(world, 0.0, 0.0, 0.0));
                                 if (size >= maxSize) worldBorder.setSize(size, 40);
+                                Bukkit.getScheduler().runTaskLater(JVaro.getInstance(), () -> {
+                                    worldBorder.setCenter(new Location(world, 0.0, 0.0, 0.0));
+                                }, 40 * 20);
                             });
                         }
                 );
