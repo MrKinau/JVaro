@@ -7,11 +7,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import systems.kinau.jvaro.JVaro;
 import systems.kinau.jvaro.utils.OfflinePlayerUtils;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +19,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class LeakLocationCommand implements CommandExecutor, TabCompleter {
+
+    private final SecureRandom RAND = new SecureRandom();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -31,11 +33,12 @@ public class LeakLocationCommand implements CommandExecutor, TabCompleter {
                 }
 
                 CompoundTag compound = OfflinePlayerUtils.getPlayerData(offlinePlayer.getUniqueId());
-                double x = OfflinePlayerUtils.getXLocation(compound);
-                double z = OfflinePlayerUtils.getZLocation(compound);
+                int x = randomize((int) Math.round(OfflinePlayerUtils.getXLocation(compound)));
+                int y = randomize((int) Math.round(OfflinePlayerUtils.getYLocation(compound)));
+                int z = randomize((int) Math.round(OfflinePlayerUtils.getZLocation(compound)));
                 String world = OfflinePlayerUtils.getWorld(compound);
 
-                JVaro.getInstance().getDiscordManager().sendLocationLeakMessage(offlinePlayer, world, (int)Math.round(x), (int)Math.round(z));
+                JVaro.getInstance().getDiscordManager().sendLocationLeakMessage(offlinePlayer, world, x, y, z);
 
                 List<String> locatable = JVaro.getInstance().getDataConfig().getStringList("locatable");
                 if (!locatable.contains(offlinePlayer.getUniqueId().toString())) {
@@ -52,6 +55,10 @@ public class LeakLocationCommand implements CommandExecutor, TabCompleter {
             } else sender.sendMessage("Dumm? /locationleak <Spieler>");
         }
         return true;
+    }
+
+    private int randomize(int coordinate) {
+        return coordinate + RAND.nextInt(21) - 10;
     }
 
     @Override

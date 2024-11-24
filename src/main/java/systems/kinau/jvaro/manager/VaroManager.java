@@ -26,7 +26,7 @@ public class VaroManager {
         JVaro plugin = JVaro.getInstance();
         plugin.getDataConfig().set("started", true);
         // set worldborder start in 2 days
-        plugin.getDataConfig().set("nextWorldborderChange", LocalDate.now(ZoneId.of("Europe/Berlin")).atStartOfDay().plusDays(2).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
+        plugin.getDataConfig().set("nextWorldborderChange", LocalDate.now(ZoneId.of("Europe/Berlin")).atStartOfDay().plusDays(3).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
         plugin.getDataConfig().save(plugin.getDataFile());
 
         setWorldBorder(INITIAL_WORLDBORDER_SIZE);

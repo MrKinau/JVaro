@@ -12,10 +12,10 @@ public class StartTask implements Runnable {
 
     private int counter;
     private String currentPlayer;
-    private List<String> claims = List.of("%s hat den Start verpennt", "%s wird als erstes sterben", "%s wird den Stegi machen",
-            "%s versteht 1.9er PvP nicht", "%s überlebt die 2. Nacht nicht", "%s <TODO: Joke über Leon einfügen>",
-            "%s ist vom Himmel gefallen", "fretoger plant schon ein neues Projekt", "%s wird gewinnen", "MinecraftiUndCo ist \"kurz\" afk",
-            "%s hat seinen Teampartner vergessen", "%s findet niemals Dias", "%s wird in der Hölle verglühen");
+    private final List<String> CLAIMS = List.of("%s hat den Start verpennt", "%s wird als erstes sterben", "%s wird durch eine Falle sterben",
+            "%s versteht 1.9er PvP nicht", "%s findet die letzte Ente", "%s <TODO: Joke über Leon einfügen>",
+            "%s diskutiert nur über die Regeln", "fretoger plant schon ein neues Projekt", "%s freut sich schon auf den Ledaria Release", "MinecraftiUndCo ist \"kurz\" afk",
+            "%s stirbt an der Border", "%s wird nur Fallen bauen", "%s wird in der Hölle verglühen");
 
     public StartTask() {
         this.counter = 60;
@@ -46,7 +46,7 @@ public class StartTask implements Runnable {
             currentPlayer = getRandomPlayer();
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            String claim = claims.get((int)Math.ceil(counter / 5.0));
+            String claim = CLAIMS.get((int)Math.ceil(counter / 5.0));
             if (claim.contains("%s"))
                 claim = String.format(claim, currentPlayer);
 

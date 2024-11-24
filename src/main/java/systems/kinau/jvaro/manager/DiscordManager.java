@@ -4,6 +4,7 @@ import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import systems.kinau.jvaro.JVaro;
@@ -96,12 +97,13 @@ public class DiscordManager {
 
     public void sendDeathMessage(String deathMessage) {
         List<WebhookClient> webHooks = JVaro.getInstance().getConfig().getStringList("deathsWebhooks").stream().map(WebhookClient::withUrl).collect(Collectors.toList());
+        String finalDeathMessage = ChatColor.stripColor(deathMessage);
         webHooks.forEach(webhook ->
                 webhook.send(new WebhookMessageBuilder()
                         .addEmbeds(new WebhookEmbedBuilder()
                                 .setColor(0xff0000)
                                 .setTitle(new WebhookEmbed.EmbedTitle("TOOOD! Get rekt!", null))
-                                .setDescription("\n" + deathMessage + "\n")
+                                .setDescription("\n" + finalDeathMessage + "\n")
                                 .setThumbnailUrl("https://cdn.pixabay.com/photo/2013/07/13/12/32/tombstone-159792_960_720.png")
                                 .build())
                         .setUsername(discordName)
@@ -109,14 +111,14 @@ public class DiscordManager {
         );
     }
 
-    public void sendLocationLeakMessage(OfflinePlayer player, String world, int x, int z) {
+    public void sendLocationLeakMessage(OfflinePlayer player, String world, int x, int y, int z) {
         List<WebhookClient> webHooks = JVaro.getInstance().getConfig().getStringList("locationLeakWebhooks").stream().map(WebhookClient::withUrl).collect(Collectors.toList());
         webHooks.forEach(webhook ->
                 webhook.send(new WebhookMessageBuilder()
                         .addEmbeds(new WebhookEmbedBuilder()
                                 .setColor(0xff0000)
                                 .setTitle(new WebhookEmbed.EmbedTitle("Punishment: Koordinaten-Leak", null))
-                                .setDescription("\n" + player.getName() + " ist in \"" + world + "\" bei\n\nX=" + x + "\nZ=" + z + "\n")
+                                .setDescription("\n" + player.getName() + " ist in \"" + world + "\" bei\n\nX=" + x + "\nY=" + y + "\nZ=" + z + "\n")
                                 .setThumbnailUrl("https://cravatar.eu/helmhead/" + player.getUniqueId().toString().replace("-", "").toLowerCase() + "/256.png")
                                 .build())
                         .setUsername(discordName)

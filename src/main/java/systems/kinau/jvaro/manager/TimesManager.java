@@ -12,17 +12,21 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class TimesManager {
 
     private Timestamp todayStart = new Timestamp(LocalDate.now(ZoneId.of("Europe/Berlin")).atTime(JVaro.getInstance().getConfig().getInt("startLoginTime"), 0).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
     private Timestamp todayEnd = new Timestamp(LocalDate.now(ZoneId.of("Europe/Berlin")).atTime(JVaro.getInstance().getConfig().getInt("endLoginTime"), 0).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
 
-    private HashMap<UUID, Long> loginTimes = new HashMap<>();
-    private HashMap<UUID, BukkitTask> logOffBukkitTasks = new HashMap<>();
-    private HashMap<UUID, LogOffTask> logOffTasks = new HashMap<>();
+    private final HashMap<UUID, Long> loginTimes = new HashMap<>();
+    private final HashMap<UUID, BukkitTask> logOffBukkitTasks = new HashMap<>();
+    private final HashMap<UUID, LogOffTask> logOffTasks = new HashMap<>();
     public List<UUID> damageDealt = new ArrayList<>();
+    private boolean startDay = false;
 
     public TimesManager() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(JVaro.getInstance(), this::updateStartStop, 100, 100);
@@ -67,6 +71,7 @@ public class TimesManager {
     }
 
     public void resetTimes() {
+        this.startDay = false;
         loginTimes.clear();
         JVaro.getInstance().getTimesConfig().set("savedTimes", null);
         try {
@@ -80,6 +85,7 @@ public class TimesManager {
     }
 
     public void varoStart() {
+        this.startDay = true;
         Bukkit.getOnlinePlayers().forEach(player -> loginTimes.put(player.getUniqueId(), System.currentTimeMillis()));
         JVaro.getInstance().getTimesConfig().set("savedTimes", null);
         try {
@@ -95,7 +101,7 @@ public class TimesManager {
     }
 
     private void updateOnlineTime() {
-        int checkTime = (JVaro.getInstance().getConfig().getInt("playTime") * 60 * 1000) - 30_000;
+        int checkTime = (JVaro.getInstance().getConfig().getInt("playTime") * 60 * 1000 * (startDay ? 2 : 1)) - 30_000;
         Bukkit.getOnlinePlayers().forEach(player -> {
                     Long time = loginTimes.get(player.getUniqueId());
                     if (time != null && !logOffBukkitTasks.containsKey(player.getUniqueId())) {

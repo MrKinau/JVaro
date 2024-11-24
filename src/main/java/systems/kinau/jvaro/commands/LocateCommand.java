@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class LocateCommand implements CommandExecutor {
 
     private final Cache<UUID, Long> cantUseLocate = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
-    private final String messagePattern = "§e%s befindet sich bei §cX=%s§e, §cZ=%s §ein §c%s§e.";
+    private final String messagePattern = "§e%s befindet sich bei §cX=%s§e, §cY=%s§e, §cZ=%s §ein §c%s§e.";
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -42,6 +42,12 @@ public class LocateCommand implements CommandExecutor {
         String loc = getLocation(locatedUuid);
         if (loc == null) {
             sender.sendMessage("§cWow sogar zu dumm zum tippen. GG. Es gibt niemanden, der so einen komischen Namen hat.");
+            return true;
+        }
+
+        Player locatedPlayer = Bukkit.getPlayer(locatedUuid);
+        if (locatedPlayer == null || !locatedPlayer.isOnline()) {
+            sender.sendMessage("§cWow sogar zu dumm zum tippen. GG. Dieser Spieler ist nicht online, du Dulli.");
             return true;
         }
 
@@ -83,8 +89,9 @@ public class LocateCommand implements CommandExecutor {
         if (player != null && player.isOnline()) {
             String world = player.getLocation().getWorld().getName();
             String x = String.valueOf(player.getLocation().getBlockX());
+            String y = String.valueOf(player.getLocation().getBlockY());
             String z = String.valueOf(player.getLocation().getBlockZ());
-            return String.format(messagePattern, player.getName(), x, z, world);
+            return String.format(messagePattern, player.getName(), x, y, z, world);
         }
 
         CompoundTag tag = OfflinePlayerUtils.getPlayerData(uuid);
@@ -92,7 +99,8 @@ public class LocateCommand implements CommandExecutor {
 
         String world = OfflinePlayerUtils.getWorld(tag);
         String x = String.valueOf((int)Math.round(OfflinePlayerUtils.getXLocation(tag)));
+        String y = String.valueOf((int)Math.round(OfflinePlayerUtils.getYLocation(tag)));
         String z = String.valueOf((int)Math.round(OfflinePlayerUtils.getZLocation(tag)));
-        return String.format(messagePattern, Bukkit.getOfflinePlayer(uuid).getName(), x, z, world);
+        return String.format(messagePattern, Bukkit.getOfflinePlayer(uuid).getName(), x, y, z, world);
     }
 }
