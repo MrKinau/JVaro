@@ -13,6 +13,7 @@ import systems.kinau.jvaro.commands.LeakLocationCommand;
 import systems.kinau.jvaro.commands.LocateCommand;
 import systems.kinau.jvaro.commands.SimpleTeamCommand;
 import systems.kinau.jvaro.commands.StartCommand;
+import systems.kinau.jvaro.listener.BrandListener;
 import systems.kinau.jvaro.listener.LabymodKiller;
 import systems.kinau.jvaro.listener.PlayerListener;
 import systems.kinau.jvaro.manager.DiscordManager;
@@ -51,6 +52,9 @@ public final class JVaro extends JavaPlugin {
 
     private void registerListener() {
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        BrandListener brandListener = new BrandListener();
+        Bukkit.getServer().getPluginManager().registerEvents(brandListener, this);
+        Bukkit.getServer().getMessenger().registerIncomingPluginChannel(this, "minecraft:brand", brandListener);
         Bukkit.getServer().getMessenger().registerIncomingPluginChannel(this, "labymod3:main", new LabymodKiller());
     }
 

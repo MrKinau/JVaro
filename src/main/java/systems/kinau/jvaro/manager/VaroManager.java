@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 public class VaroManager {
 
-    private final int INITIAL_WORLDBORDER_SIZE = 3000;
+    private final int INITIAL_WORLD_BORDER_SIZE = 4000;
 
     public VaroManager() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(JVaro.getInstance(), this::dealWorldBorderDamage, 0, 20);
@@ -29,7 +29,7 @@ public class VaroManager {
         plugin.getDataConfig().set("nextWorldborderChange", LocalDate.now(ZoneId.of("Europe/Berlin")).atStartOfDay().plusDays(3).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
         plugin.getDataConfig().save(plugin.getDataFile());
 
-        setWorldBorder(INITIAL_WORLDBORDER_SIZE);
+        setWorldBorder(INITIAL_WORLD_BORDER_SIZE);
 
         Bukkit.getWorlds().forEach(world -> {
             world.setFullTime(0);
@@ -80,7 +80,7 @@ public class VaroManager {
     }
 
     private void changeWorldBorder(int sizeDiff) {
-        changeWorldBorder(sizeDiff, 1000);
+        changeWorldBorder(sizeDiff, 400);
     }
 
     private void changeWorldBorder(int sizeDiff, int maxSize) {

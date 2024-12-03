@@ -64,6 +64,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
+        if (e.getRespawnReason() != PlayerRespawnEvent.RespawnReason.DEATH) return;
         if (!JVaro.getInstance().getDataConfig().getBoolean("started")) return;
         Bukkit.getScheduler().runTaskLater(JVaro.getInstance(), () ->  {
             Bukkit.getBanList(BanList.Type.NAME).addBan(e.getPlayer().getName(), "§cDu bist ausgeschieden, weil du zu schlecht warst!", null, null);

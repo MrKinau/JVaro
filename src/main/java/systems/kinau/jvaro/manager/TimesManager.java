@@ -20,7 +20,7 @@ import java.util.UUID;
 public class TimesManager {
 
     private Timestamp todayStart = new Timestamp(LocalDate.now(ZoneId.of("Europe/Berlin")).atTime(JVaro.getInstance().getConfig().getInt("startLoginTime"), 0).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
-    private Timestamp todayEnd = new Timestamp(LocalDate.now(ZoneId.of("Europe/Berlin")).atTime(JVaro.getInstance().getConfig().getInt("endLoginTime"), 0).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
+    private Timestamp todayEnd = new Timestamp(LocalDate.now(ZoneId.of("Europe/Berlin")).atTime(JVaro.getInstance().getConfig().getInt("endLoginTime") - 1, 59).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
 
     private final HashMap<UUID, Long> loginTimes = new HashMap<>();
     private final HashMap<UUID, BukkitTask> logOffBukkitTasks = new HashMap<>();
@@ -97,7 +97,7 @@ public class TimesManager {
 
     private void updateStartStop() {
         todayStart = new Timestamp(LocalDate.now(ZoneId.of("Europe/Berlin")).atTime(JVaro.getInstance().getConfig().getInt("startLoginTime"), 0).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
-        todayEnd = new Timestamp(LocalDate.now(ZoneId.of("Europe/Berlin")).atTime(JVaro.getInstance().getConfig().getInt("endLoginTime"), 0).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
+        todayEnd = new Timestamp(LocalDate.now(ZoneId.of("Europe/Berlin")).atTime(JVaro.getInstance().getConfig().getInt("endLoginTime") - 1, 59).toInstant(OffsetDateTime.now(ZoneId.of("Europe/Berlin")).getOffset()).toEpochMilli());
     }
 
     private void updateOnlineTime() {
