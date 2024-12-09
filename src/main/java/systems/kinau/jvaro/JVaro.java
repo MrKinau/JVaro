@@ -17,6 +17,7 @@ import systems.kinau.jvaro.listener.BrandListener;
 import systems.kinau.jvaro.listener.LabymodKiller;
 import systems.kinau.jvaro.listener.PlayerListener;
 import systems.kinau.jvaro.manager.DiscordManager;
+import systems.kinau.jvaro.manager.LocationLeakManager;
 import systems.kinau.jvaro.manager.TimesManager;
 import systems.kinau.jvaro.manager.VaroManager;
 
@@ -37,6 +38,7 @@ public final class JVaro extends JavaPlugin {
     private VaroManager varoManager;
     private DiscordManager discordManager;
     private TimesManager timesManager;
+    private LocationLeakManager locationLeakManager;
 
     @Override
     public void onEnable() {
@@ -48,6 +50,7 @@ public final class JVaro extends JavaPlugin {
         varoManager = new VaroManager();
         discordManager = new DiscordManager();
         timesManager = new TimesManager();
+        locationLeakManager = new LocationLeakManager();
     }
 
     private void registerListener() {

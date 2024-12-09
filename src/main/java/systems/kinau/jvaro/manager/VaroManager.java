@@ -117,6 +117,7 @@ public class VaroManager {
                     e.printStackTrace();
                 }
                 plugin.getTimesManager().resetTimes();
+                plugin.getLocationLeakManager().leakAllLocatablePlayers();
             });
         }
     }
